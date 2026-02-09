@@ -3,30 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
-use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class MemberCheckController extends Controller
 {
     public function index()
     {
-        $settings = Setting::first();
-        
-        return view('member-check', compact('settings'));
+        return view('member-check');
     }
-    
+
     public function check(Request $request)
     {
         $request->validate([
-            'identifier' => 'required|string'
+            'identifier' => 'required|string',
         ]);
-        
-        $member = Member::where('nik', $request->identifier)
-            ->orWhere('member_number', $request->identifier)
+
+        $identifier = $request->identifier;
+
+        // Search by member_number or NIK
+        $member = Member::where('member_number', $identifier)
+            ->orWhere('nik', $identifier)
             ->first();
-        
-        $settings = Setting::first();
-        
-        return view('member-check', compact('member', 'settings'));
+
+        if ($member) {
+            return view('member-check', [
+                'member' => $member,
+                'found' => true,
+            ]);
+        }
+
+        return view('member-check', [
+            'found' => false,
+            'message' => 'Data tidak ditemukan. NIK atau Nomor Anggota tidak terdaftar dalam sistem.',
+        ]);
     }
 }
