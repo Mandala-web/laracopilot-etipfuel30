@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Structure extends Model
+{
+    protected $fillable = [
+        'name',
+        'position',
+        'category',
+        'order'
+    ];
+    
+    protected $casts = [
+        'order' => 'integer'
+    ];
+}
